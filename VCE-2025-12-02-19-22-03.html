@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Rajasthan GK Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1724; --card:#0b1220; --accent:#ffb86b; --muted:#9aa4b2; --glass:rgba(255,255,255,0.04);
+  --success:#4ade80; --danger:#ff6b6b;
+}
+*{box-sizing:border-box;font-family:Inter,system-ui,Arial}
+body{margin:0;background:linear-gradient(180deg,#071029 0%, #0b1220 100%);color:#e6eef6;min-height:100vh}
+.container{max-width:1100px;margin:28px auto;padding:20px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ff7a59);
+  display:flex;align-items:center;justify-content:center;font-weight:700;color:#081226;font-size:18px;box-shadow:0 6px 18px rgba(255,184,107,0.12)
+}
+.title{font-size:1.2rem;font-weight:700}
+.subtitle{color:var(--muted);font-size:0.9rem}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:18px;margin-top:18px;box-shadow:0 6px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
+.topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:14px}
+.topic-btn{background:var(--glass);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);cursor:pointer;color:var(--accent);font-weight:600}
+.topic-btn.active{background:linear-gradient(90deg, rgba(255,184,107,0.12), rgba(255,122,89,0.06));color:#fff;box-shadow:0 8px 30px rgba(255,122,89,0.06)}
+.controls{display:flex;gap:10px;align-items:center}
+.small{font-size:0.85rem;color:var(--muted)}
+.quiz-area{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:18px}
+@media(max-width:980px){.quiz-area{grid-template-columns:1fr}}
+.question-card{padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));border:1px solid rgba(255,255,255,0.03)}
+.qtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.progress{height:10px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden;flex:1;margin-left:12px}
+.progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#ff7a59);width:0%}
+.question-text{font-size:1.05rem;margin:12px 0 18px}
+.options{display:grid;gap:10px}
+.option{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.01);cursor:pointer;transition:all .18s}
+.option:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(2,6,23,0.6)}
+.option.selected{background:linear-gradient(90deg, rgba(255,184,107,0.12), rgba(255,122,89,0.06));border-color:rgba(255,122,89,0.18);color:#fff}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:10px}
+.btn{background:var(--accent);color:#081226;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);font-weight:600}
+.side-card{padding:16px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));border:1px solid rgba(255,255,255,0.03)}
+.stat{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.stat strong{font-size:1.1rem}
+.timer{font-weight:700;color:var(--muted)}
+.result{padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));border:1px solid rgba(255,255,255,0.03);margin-top:18px}
+.result .score{font-size:2.2rem;font-weight:800;color:var(--accent)}
+.result .percent{font-size:1.1rem;color:var(--muted);margin-top:6px}
+.result-list{margin-top:12px}
+.result-item{padding:12px;border-radius:10px;margin-bottom:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02)}
+.correct{color:var(--success);font-weight:700}
+.wrong{color:var(--danger);font-weight:700}
+.footer{margin-top:28px;text-align:center;color:var(--muted);font-size:0.9rem}
+.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);color:var(--muted);font-weight:600}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="brand">
+      <div class="logo">RJ</div>
+      <div>
+        <div class="title">Rajasthan GK Quiz</div>
+        <div class="subtitle">राजस्थान के हर टॉपिक पर टेस्ट करें — हर टॉपिक में 25 प्रश्न</div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="small">Mode</div>
+      <button id="resetAll" class="btn ghost">Reset Progress</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div>
+        <div style="font-weight:700;font-size:1.05rem">Choose Topic</div>
+        <div class="small">किसी भी टॉपिक पर क्लिक करके क्विज़ शुरू करें</div>
+      </div>
+      <div class="small badge" id="topicCount">6 Topics • 25 Questions each</div>
+    </div>
+
+    <div class="topics" id="topicsList" style="margin-top:14px"></div>
+  </div>
+
+  <div class="quiz-area">
+    <div>
+      <div class="question-card" id="quizCard" style="display:none">
+        <div class="qtop">
+          <div><strong id="topicTitle">Topic</strong> <span class="small" id="qIndex">Q 1 / 25</span></div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="small">Progress</div>
+            <div class="progress" style="width:220px"><i id="progressBar"></i></div>
+          </div>
+        </div>
+
+        <div class="question-text" id="questionText">Question text</div>
+
+        <div class="options" id="optionsList"></div>
+
+        <div class="nav-row">
+          <button id="prevBtn" class="btn ghost">Previous</button>
+          <div style="display:flex;gap:8px">
+            <button id="skipBtn" class="btn ghost">Skip</button>
+            <button id="nextBtn" class="btn">Next</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="startCard" class="card" style="text-align:center">
+        <h3 style="margin:6px 0">Ready to test your Rajasthan knowledge</h3>
+        <p class="small" style="margin:6px 0 14px">हर टॉपिक में 25 प्रश्न; क्विज़ पूरा होने पर प्रतिशत और पूरा रिज़ल्ट मिलेगा</p>
+        <div id="startButtons" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"></div>
+      </div>
+
+      <div id="resultCard" class="result" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <div>
+            <div class="score" id="finalScore">0 / 25</div>
+            <div class="percent" id="finalPercent">0%</div>
+          </div>
+          <div style="text-align:right">
+            <div class="small">Topic</div>
+            <div style="font-weight:700" id="finalTopic">—</div>
+            <div style="margin-top:8px">
+              <button id="retryBtn" class="btn">Retry Topic</button>
+              <button id="backTopics" class="btn ghost">Back to Topics</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-list" id="resultList"></div>
+      </div>
+    </div>
+
+    <aside>
+      <div class="side-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong>Quiz Info</strong></div>
+          <div class="small" id="timeInfo">No timer</div>
+        </div>
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:12px 0">
+        <div class="stat"><div class="small">Topic</div><strong id="sideTopic">—</strong></div>
+        <div class="stat"><div class="small">Question</div><strong id="sideQ">0 / 25</strong></div>
+        <div class="stat"><div class="small">Answered</div><strong id="sideAnswered">0</strong></div>
+        <div class="stat"><div class="small">Skipped</div><strong id="sideSkipped">0</strong></div>
+        <div style="margin-top:12px">
+          <button id="showAnswers" class="btn ghost" style="width:100%">Show Answers After Finish</button>
+        </div>
+      </div>
+
+      <div class="side-card" style="margin-top:14px;text-align:center">
+        <div style="font-weight:700">Tip</div>
+        <div class="small" style="margin-top:8px">हर प्रश्न के बाद Next दबाएँ। पूरा होने पर Full Result देखें और गलतियों से सीखें।</div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="footer">Made with care for Rajasthan learners • Customize questions in the code</div>
+</div>
+
+<script>
+/*
+  Rajasthan GK Quiz Website Script
+  - Topics each have 25 questions
+  - Data structure: questionsData = { topicId: {title, questions: [{q, options:[..], answer: index, explain: ''}, ...]} }
+  - You can edit questions below
+*/
+
+/* ---------------------------
+   Questions Data (6 topics x 25 each)
+   For brevity explanations are short. Edit as needed.
+   --------------------------- */
+const questionsData = {
+  history: {
+    title: "Rajasthan History",
+    questions: [
+      {q:"राजस्थान का प्राचीन नाम क्या था", options:["Rajputana","Marwar","Mewar","Saurashtra"], answer:0, explain:"British काल में Rajputana नाम प्रचलित था."},
+      {q:"मेवाड़ के प्रसिद्ध शासक महाराणा प्रताप का युद्ध किससे हुआ", options:["अकबर","औरंगज़ेब","शेरशाह सूरी","हुमायूँ"], answer:0, explain:"हैदराबाद के अकबर के साथ हल्दीघाटी युद्ध."},
+      {q:"चित्तौड़गढ़ का किला किस राजवंश का मुख्य केंद्र था", options:["गुहिल/गोहिल","सिसोदिया","राठौड़","कच्छवा"], answer:0, explain:"गुहिल वंश ने चित्तौड़गढ़ की स्थापना की."},
+      {q:"जयपुर शहर की स्थापना किसने की थी", options:["सवाई जयसिंह II","अलवर के राजा","महाराणा प्रताप","महाराजा मानसिंह"], answer:0, explain:"सवाई जयसिंह II ने 1727 में जयपुर बसाया."},
+      {q:"मेवाड़ का प्रसिद्ध किला कौन सा है", options:["चित्तौड़गढ़","अमेर किला","जैसलमेर किला","कुम्भलगढ़"], answer:0, explain:"चित्तौड़गढ़ मेवाड़ का प्रमुख किला है."},
+      {q:"जैसलमेर का स्वर्णिम किला किसने बनवाया", options:["जैसल सिंह","रावल जेसल","महारावल","सवाई जयसिंह"], answer:1, explain:"रावल जेसल ने 1156 में किला बनवाया."},
+      {q:"कुम्भलगढ़ किले की दीवार किस चीज के लिए प्रसिद्ध है", options:["दुनिया की सबसे लंबी दीवारों में से","सबसे ऊँची दीवार","सबसे मोटी दीवार","सबसे पुरानी दीवार"], answer:0, explain:"कुम्भलगढ़ की दीवार विश्व की दूसरी सबसे लंबी मानी जाती है."},
+      {q:"राजस्थान में 'ठाठ' किससे जुड़ा है", options:["राजपूत संस्कृति","मुगल संस्कृति","ब्रिटिश संस्कृति","पंजाबी संस्कृति"], answer:0, explain:"ठाठ राजपूतों की शान और परंपरा दर्शाता है."},
+      {q:"अलवर का प्रसिद्ध किला कौन सा है", options:["सिरोही किला","सिवाना किला","संगानेर किला","सिरोही नहीं, अलवर का 'सिरोही' नहीं"], answer:3, explain:"अलवर का प्रमुख किला 'सिरोही' नहीं; अलवर का किला 'सिरोही' विकल्प गलत है."},
+      {q:"राजस्थान में 'भील' जनजाति मुख्यतः किस क्षेत्र में रहती है", options:["सवाई माधोपुर और उदयपुर क्षेत्र","जैसलमेर","बाड़मेर","झुंझुनू"], answer:0, explain:"भील जनजाति उदयपुर, सवाई माधोपुर आदि में पाई जाती है."},
+      {q:"राजस्थान का कौन सा शहर 'गुलाबी नगर' के नाम से जाना जाता है", options:["जयपुर","जोधपुर","उदयपुर","बीकानेर"], answer:0, explain:"जयपुर को गुलाबी नगर कहा जाता है."},
+      {q:"राजस्थान के किस क्षेत्र को 'मरुस्थल' कहा जाता है", options:["थार","अरावली","मालवा","रावतभाटा"], answer:0, explain:"थार मरुस्थल राजस्थान का प्रमुख रेगिस्तान है."},
+      {q:"राजस्थान के किस किले को 'सूर्य मंदिर' के निकट माना जाता है", options:["कुंभलगढ़","चित्तौड़गढ़","कुंभलगढ़ नहीं","कुंभलगढ़ के पास सूर्य मंदिर नहीं"], answer:2, explain:"यह प्रश्न भ्रमित करने वाला है; सही उत्तर कुंभलगढ़ नहीं है."},
+      {q:"राजपूतों की परंपरागत तलवार का नाम क्या है", options:["खण्डा","तलवार","कटार","खड्ग"], answer:3, explain:"खड्ग शब्द पारंपरिक तलवार के लिए उपयोग होता है."},
+      {q:"राजस्थान में 'जोधपुर' किस राजवंश का केंद्र था", options:["राठौड़","सिसोदिया","गुहिल","कच्छवा"], answer:0, explain:"जोधपुर राठौड़ राजवंश का केंद्र था."},
+      {q:"बीकानेर की स्थापना किसने की थी", options:["राव बीका","रावल जेसल","महाराजा मानसिंह","राव जोधा"], answer:0, explain:"राव बीका ने बीकानेर की स्थापना की."},
+      {q:"राजस्थान में 'मेवाड़' किसके लिए प्रसिद्ध था", options:["स्वतंत्रता और प्रतिरोध","कृषि","व्यापार","मछली पालन"], answer:0, explain:"मेवाड़ स्वतंत्रता और प्रतिरोध के लिए प्रसिद्ध था."},
+      {q:"राजस्थान के किस शहर को 'सिटी ऑफ लेक्स' कहा जाता है", options:["उदयपुर","जयपुर","जोधपुर","अजमेर"], answer:0, explain:"उदयपुर को झीलों के कारण सिटी ऑफ लेक्स कहा जाता है."},
+      {q:"राजस्थान में 'कच्छवा' राजवंश किस क्षेत्र से जुड़े थे", options:["जैसलमेर","जोधपुर","अलवर","उदयपुर"], answer:0, explain:"कच्छवा जैसलमेर से जुड़े थे."},
+      {q:"राजस्थान के किस किले को 'सूर्यास्त' के लिए प्रसिद्ध माना जाता है", options:["जैसलमेर किला","अमेर किला","उदयपुर का किला","जोधपुर का किला"], answer:1, explain:"अमेर किला जयपुर के पास सुंदर सूर्यास्त दृश्य देता है."},
+      {q:"राजस्थान में 'पुष्कर' किसके लिए प्रसिद्ध है", options:["मेला और ब्रह्मा मंदिर","किला","कृषि","उद्योग"], answer:0, explain:"पुष्कर मेला और ब्रह्मा मंदिर के लिए प्रसिद्ध है."},
+      {q:"राजस्थान का कौन सा शहर 'ब्लू सिटी' कहा जाता है", options:["जोधपुर","जयपुर","उदयपुर","बीकानेर"], answer:0, explain:"जोधपुर को ब्लू सिटी कहा जाता है."},
+      {q:"राजस्थान में 'हवेलियाँ' किस वर्ग से जुड़ी हैं", options:["ठाकुर और जमींदारों","किसानों","व्यापारियों","मजदूरों"], answer:0, explain:"हवेलियाँ पारंपरिक रूप से जमींदारों और राजपूतों की थीं."},
+      {q:"राजस्थान के किस किले को 'जीवन रेखा' कहा जाता है", options:["कुम्भलगढ़","चित्तौड़गढ़","जैसलमेर","अमेर"], answer:0, explain:"कुम्भलगढ़ की दीवार को जीवन रेखा कहा जाता है."},
+      {q:"राजस्थान के इतिहास में 'जौहर' किसके साथ जुड़ा है", options:["रण और सम्मान की परंपरा","कृषि उत्सव","व्यापारिक समझौते","नृत्य"], answer:0, explain:"जौहर रण के समय सम्मान की परंपरा थी."}
+    ]
+  },
+
+  geography: {
+    title: "Rajasthan Geography",
+    questions: [
+      {q:"राजस्थान का सबसे बड़ा जिला क्षेत्रफल के हिसाब से कौन सा है", options:["Jaisalmer","Barmer","Bikaner","Jodhpur"], answer:0, explain:"जैसलमेर क्षेत्रफल में सबसे बड़ा है."},
+      {q:"राजस्थान की प्रमुख नदी कौन सी है", options:["Luni","Banas","Sutlej","Ganga"], answer:1, explain:"बानास राजस्थान की प्रमुख नदी है."},
+      {q:"थार रेगिस्तान किस हिस्से में फैला है", options:["पश्चिमी राजस्थान","पूर्वी राजस्थान","उत्तर राजस्थान","दक्षिण राजस्थान"], answer:0, explain:"थार पश्चिमी राजस्थान में है."},
+      {q:"अरावली पर्वतमाला किस दिशा में फैली है", options:["उत्तर-पश्चिम से दक्षिण-पूर्व","पूर्व से पश्चिम","दक्षिण से उत्तर","पश्चिम से पूर्व"], answer:0, explain:"अरावली उत्तर-पश्चिम से दक्षिण-पूर्व तक फैली है."},
+      {q:"राजस्थान की राजधानी जयपुर किस भौगोलिक क्षेत्र में है", options:["अरावली की तलहटी","थार रेगिस्तान","उदयपुर झील क्षेत्र","सिंधु मैदान"], answer:0, explain:"जयपुर अरावली की तलहटी में स्थित है."},
+      {q:"राजस्थान का सबसे ऊँचा पर्वत कौन सा है", options:["Guru Shikhar","Mount Abu Peak","Aravalli Peak","Kumbhalgarh Peak"], answer:0, explain:"गुरु शिखर माउंट आबू का उच्चतम बिंदु है."},
+      {q:"राजस्थान में समुद्र तट है या नहीं", options:["नहीं","हाँ","केवल झीलें","केवल नदियाँ"], answer:0, explain:"राजस्थान एक अंदरूनी राज्य है, समुद्र तट नहीं है."},
+      {q:"लूनी नदी किस प्रकार की नदी है", options:["अंतःस्रावी","स्थायी","वर्षा-निर्भर","बर्फ पिघलने से"], answer:2, explain:"लूनी वर्षा पर निर्भर और लवणीय नदी है."},
+      {q:"राजस्थान में कौन सा राष्ट्रीय उद्यान है", options:["Sariska","Gir","Kaziranga","Sundarbans"], answer:0, explain:"सारिस्का राष्ट्रीय उद्यान राजस्थान में है."},
+      {q:"राजस्थान का कौन सा शहर झीलों के लिए प्रसिद्ध है", options:["Udaipur","Jaisalmer","Bikaner","Ajmer"], answer:0, explain:"उदयपुर झीलों के लिए प्रसिद्ध है."},
+      {q:"राजस्थान में किस जिले में सबसे कम वर्षा होती है", options:["Jaisalmer","Alwar","Kota","Bharatpur"], answer:0, explain:"जैसलमेर में वर्षा बहुत कम होती है."},
+      {q:"अरावली की सबसे पुरानी पर्वतमाला मानी जाती है", options:["हां","नहीं","केवल मध्यकालीन","निश्चित नहीं"], answer:0, explain:"अरावली विश्व की सबसे पुरानी पर्वतमालाओं में से है."},
+      {q:"राजस्थान में 'सिंधु घाटी' का विस्तार है या नहीं", options:["नहीं","हाँ","केवल सीमांत","निश्चित नहीं"], answer:0, explain:"सिंधु घाटी राजस्थान में नहीं फैली."},
+      {q:"राजस्थान का कौन सा भाग कृषि के लिए उपयुक्त है", options:["पूर्वी और दक्षिणी भाग","पश्चिमी भाग","केवल रेगिस्तान","केवल पहाड़ी"], answer:0, explain:"पूर्वी और दक्षिणी भाग कृषि के लिए उपयुक्त हैं."},
+      {q:"राजस्थान में 'सांभर' किस प्रकार का जलाशय है", options:["खारा जलाशय","मीठा जलाशय","नदी","तालाब"], answer:0, explain:"सांभर झील खारा जलाशय है."},
+      {q:"राजस्थान में 'रण' किसके लिए प्रसिद्ध है", options:["जैसलमेर का रण","उदयपुर का रण","जयपुर का रण","बीकानेर का रण"], answer:0, explain:"जैसलमेर का रण (थार) प्रसिद्ध है."},
+      {q:"राजस्थान में मिट्टी का प्रमुख प्रकार कौन सा है", options:["रेतीली मिट्टी","काली मिट्टी","लौमी मिट्टी","मिट्टी नहीं"], answer:0, explain:"पश्चिमी भाग में रेतीली मिट्टी प्रचलित है."},
+      {q:"राजस्थान में किस जिले में माउंट आबू स्थित है", options:["Sirohi","Jalore","Pali","Sikar"], answer:0, explain:"माउंट आबू सिरोही जिले में है."},
+      {q:"राजस्थान में कौन सा क्षेत्र वनस्पति के लिए समृद्ध है", options:["माउंट आबू क्षेत्र","जैसलमेर","बाड़मेर","जोधपुर"], answer:0, explain:"माउंट आबू में वनस्पति अधिक है."},
+      {q:"राजस्थान की सीमा किस राज्य से नहीं लगती", options:["Punjab","Kerala","Gujarat","Madhya Pradesh"], answer:1, explain:"केरल राजस्थान से बहुत दूर है."},
+      {q:"राजस्थान में 'सिंधु' नदी बहती है या नहीं", options:["नहीं","हाँ","केवल उपनदी","निश्चित नहीं"], answer:0, explain:"सिंधु राजस्थान से नहीं बहती."},
+      {q:"राजस्थान में 'सांभर' किस जिले में है", options:["Jaipur","Jodhpur","Bikaner","Barmer"], answer:0, explain:"सांभर झील जयपुर जिले के पास है."},
+      {q:"राजस्थान में 'रणो का मरुस्थल' किस जिले में है", options:["Jaisalmer","Udaipur","Alwar","Bharatpur"], answer:0, explain:"रणो का मरुस्थल मुख्यतः जैसलमेर में है."},
+      {q:"राजस्थान में 'अरावली' किस प्रकार की पर्वतमाला है", options:["पुरानी पर्वतमाला","नई पर्वतमाला","मध्यकालीन","आधुनिक"], answer:0, explain:"अरावली बहुत पुरानी पर्वतमाला है."},
+      {q:"राजस्थान में 'बांस' की खेती किस क्षेत्र में मिलती है", options:["उदयपुर और दक्षिणी भाग","जैसलमेर","बाड़मेर","जोधपुर"], answer:0, explain:"दक्षिणी भागों में वनस्पति अधिक है."}
+    ]
+  },
+
+  culture: {
+    title: "Rajasthan Culture",
+    questions: [
+      {q:"राजस्थान का पारंपरिक नृत्य कौन सा है", options:["घूमर","भांगड़ा","कथक","भरतनाट्यम"], answer:0, explain:"घूमर राजस्थान का पारंपरिक नृत्य है."},
+      {q:"राजस्थानी लोक वाद्ययंत्र 'मोरचंग' किस श्रेणी में आता है", options:["स्ट्रिंग","वायु","परकशन","बाँसुरी"], answer:2, explain:"मोरचंग परकशन/हवा वाद्य जैसा माना जाता है."},
+      {q:"राजस्थान की पारंपरिक पोशाक पुरुषों के लिए क्या है", options:["धोती-कुर्ता और पगड़ी","साड़ी","शेरवानी","लुंगी"], answer:0, explain:"पुरुष पारंपरिक रूप से धोती-कुर्ता और पगड़ी पहनते हैं."},
+      {q:"राजस्थानी लोकगीतों में किस विषय का प्रमुख स्थान है", options:["वीरता और प्रेम","विज्ञान","राजनीति","खेल"], answer:0, explain:"लोकगीतों में वीरता और प्रेम प्रमुख हैं."},
+      {q:"राजस्थान का प्रसिद्ध व्यंजन 'दाल बाटी चूरमा' किसके साथ परोसा जाता है", options:["घी","दही","चटनी","सलाद"], answer:0, explain:"दाल बाटी चूरमा घी के साथ परोसा जाता है."},
+      {q:"राजस्थान में 'कठपुतली' किस कला का रूप है", options:["पुतला नाटक","नृत्य","संगीत","चित्रकला"], answer:0, explain:"कठपुतली पुतला नाटक की पारंपरिक कला है."},
+      {q:"राजस्थानी पेंटिंग की प्रसिद्ध शैली कौन सी है", options:["मिनीएचर पेंटिंग","वारली","मधुबनी","तंजावुर"], answer:0, explain:"राजस्थानी मिनिएचर पेंटिंग प्रसिद्ध है."},
+      {q:"राजस्थान में 'बाजोट' किसके लिए उपयोग होता है", options:["बैठने के लिए छोटा स्टूल","खाना पकाने के लिए","संगीत वाद्य","कृषि उपकरण"], answer:0, explain:"बाजोट एक छोटा स्टूल है."},
+      {q:"राजस्थान की पारंपरिक ज्वेलरी में किसका विशेष महत्व है", options:["नक़्शी और मोती","सोना नहीं","प्लास्टिक","काँच"], answer:0, explain:"नक़्शी और मोती पारंपरिक ज्वेलरी में महत्वपूर्ण हैं."},
+      {q:"राजस्थान में 'पगड़ी' का क्या महत्व है", options:["सम्मान और पहचान","केवल सजावट","खेल","खाना"], answer:0, explain:"पगड़ी सम्मान और पहचान का प्रतीक है."},
+      {q:"राजस्थानी लोक नृत्य 'घूमर' मुख्यतः किस समुदाय से जुड़ा है", options:["राजपूत महिलाओं","ब्राह्मण","मुस्लिम पुरुष","किसान"], answer:0, explain:"घूमर पारंपरिक रूप से राजपूत महिलाओं का नृत्य है."},
+      {q:"राजस्थान की प्रसिद्ध हस्तकला कौन सी है", options:["ब्लॉक प्रिंटिंग","कांच कला","काष्ठकला","लोहे की कारीगरी"], answer:0, explain:"ब्लॉक प्रिंटिंग राजस्थान की प्रमुख हस्तकला है."},
+      {q:"राजस्थान में 'कठोर' किसका नाम है", options:["एक पारंपरिक संगीत वाद्य","नृत्य","भोजन","कपड़ा"], answer:0, explain:"कठोर एक पारंपरिक वाद्य हो सकता है."},
+      {q:"राजस्थान में 'पगड़ी' के रंग क्या दर्शाते हैं", options:["समारोह और स्थिति","केवल फैशन","मौसम","आयु"], answer:0, explain:"रंग समारोह और सामाजिक स्थिति दर्शाते हैं."},
+      {q:"राजस्थानी लोककथाओं में किस प्रकार की कहानियाँ मिलती हैं", options:["वीर गाथाएँ और प्रेम कथाएँ","वैज्ञानिक कथाएँ","आधुनिक उपन्यास","नाटक"], answer:0, explain:"लोककथाएँ वीर गाथाएँ और प्रेम कथाएँ बताती हैं."},
+      {q:"राजस्थान की पारंपरिक बुनाई किसके लिए प्रसिद्ध है", options:["कंबल और चादरें","जूते","कपड़े नहीं","मिट्टी के बर्तन"], answer:0, explain:"कंबल और चादरें पारंपरिक बुनाई के उत्पाद हैं."},
+      {q:"राजस्थान में 'कुचेरा' किसका नाम है", options:["एक पारंपरिक खेल","नृत्य","भोजन","उत्सव"], answer:0, explain:"कुचेरा पारंपरिक खेल हो सकता है."},
+      {q:"राजस्थान की लोक कला में किस रंग का प्रयोग अधिक होता है", options:["गहरा लाल और पीला","नीला नहीं","सफेद नहीं","काला नहीं"], answer:0, explain:"गहरा लाल और पीला पारंपरिक रंग हैं."},
+      {q:"राजस्थान में 'बाजार' किस चीज के लिए प्रसिद्ध हैं", options:["हस्तशिल्प और कपड़े","इलेक्ट्रॉनिक्स","ऑटो पार्ट्स","फर्नीचर"], answer:0, explain:"हस्तशिल्प और पारंपरिक कपड़े बाजारों में मिलते हैं."},
+      {q:"राजस्थानी संगीत में किस वाद्य का प्रयोग आम है", options:["रावणहठ","गिटार","पियानो","ड्रम"], answer:0, explain:"रावणहठ पारंपरिक वाद्य है."},
+      {q:"राजस्थान में 'मेहंदी' किस अवसर पर लगाई जाती है", options:["विवाह और उत्सव","किसी भी दिन","केवल त्योहार","किसी नहीं"], answer:0, explain:"मेहंदी विवाह और उत्सवों पर लगाई जाती है."},
+      {q:"राजस्थानी परिधान में 'घाघरा' किसके लिए पहना जाता है", options:["महिलाओं का पारंपरिक परिधान","पुरुषों का","बच्चों का","किसी नहीं"], answer:0, explain:"घाघरा महिलाओं का पारंपरिक परिधान है."},
+      {q:"राजस्थान की लोककला में 'फेस्टिवल' का क्या महत्व है", options:["समुदाय और परंपरा को जोड़ना","केवल मनोरंजन","व्यापार","राजनीति"], answer:0, explain:"त्योहार समुदाय और परंपरा को जोड़ते हैं."},
+      {q:"राजस्थान की पारंपरिक रसोई में किस चीज का अधिक उपयोग होता है", options:["घी","तेल नहीं","दूध नहीं","मसाले"], answer:0, explain:"घी पारंपरिक व्यंजनों में प्रमुख है."}
+    ]
+  },
+
+  personalities: {
+    title: "Famous Personalities",
+    questions: [
+      {q:"महाराणा प्रताप किस राज्य से संबंधित थे", options:["मेवाड़","मारवाड़","जयपुर","अलवर"], answer:0, explain:"महाराणा प्रताप मेवाड़ के शासक थे."},
+      {q:"प्रसिद्ध राजस्थानी लोकगायक 'मीराबाई' किसके समय की थीं", options:["भक्ति काल","मुगल काल","आधुनिक काल","ब्रिटिश काल"], answer:0, explain:"मीराबाई भक्ति काल की कवयित्री थीं."},
+      {q:"सवाई जयसिंह II किस शहर के संस्थापक थे", options:["जयपुर","जोधपुर","उदयपुर","बीकानेर"], answer:0, explain:"सवाई जयसिंह II ने जयपुर की स्थापना की."},
+      {q:"राव जोधा किस शहर के संस्थापक थे", options:["जोधपुर","जैसलमेर","बीकानेर","अलवर"], answer:0, explain:"राव जोधा ने जोधपुर की स्थापना की."},
+      {q:"रावल जेसल किस शहर के संस्थापक थे", options:["जैसलमेर","जोधपुर","जयपुर","बीकानेर"], answer:0, explain:"रावल जेसल ने जैसलमेर की स्थापना की."},
+      {q:"प्रसिद्ध राजस्थानी कवि 'कबीर' का संबंध राजस्थान से था या नहीं", options:["नहीं","हाँ","कभी-कभी","निश्चित नहीं"], answer:0, explain:"कबीर का संबंध विशेष रूप से राजस्थान से नहीं था."},
+      {q:"राजस्थान के किस नेता ने स्वतंत्रता संग्राम में भाग लिया", options:["लाल बहादुर शास्त्री नहीं","महाराणा प्रताप (ऐतिहासिक)","लोकल नेताओं ने भाग लिया","सभी"], answer:2, explain:"स्थानीय नेताओं ने स्वतंत्रता संग्राम में भाग लिया."},
+      {q:"प्रसिद्ध राजस्थानी चित्रकार 'नागार' किस शैली के लिए जाने जाते हैं", options:["मिनीएचर","आधुनिक","वारली","मधुबनी"], answer:0, explain:"मिनीएचर शैली राजस्थान में प्रसिद्ध है."},
+      {q:"राजस्थान के किस व्यक्ति ने राष्ट्रीय स्तर पर योगदान दिया", options:["महाराजा मानसिंह","किसी भी स्थानीय नेता","कई राजस्थानी नेताओं ने योगदान दिया","कोई नहीं"], answer:2, explain:"कई राजस्थानी नेताओं ने राष्ट्रीय योगदान दिया."},
+      {q:"राजस्थान की प्रसिद्ध महिला योद्धा 'पन्ना धाय' किसके लिए जानी जाती हैं", options:["राजघराने की सेवा और बलिदान","कृषि","व्यापार","नृत्य"], answer:0, explain:"पन्ना धाय ने राजघराने की सेवा की."},
+      {q:"राजस्थान के किस व्यक्ति ने कला और संस्कृति को बढ़ावा दिया", options:["कई राजाओं और संरक्षकों ने","केवल एक व्यक्ति","कोई नहीं","सरकार"], answer:0, explain:"कई राजाओं ने कला और संस्कृति को बढ़ावा दिया."},
+      {q:"प्रसिद्ध राजस्थानी लोकगायक 'किस्सा' किस रूप में प्रसिद्ध हैं", options:["कथा गायन","नृत्य","चित्रकला","कविता"], answer:0, explain:"किस्सा कथा गायन की परंपरा है."},
+      {q:"राजस्थान के किस शासक ने जयपुर का नियोजन कराया", options:["सवाई जयसिंह II","महाराणा प्रताप","राव जोधा","रावल जेसल"], answer:0, explain:"सवाई जयसिंह II ने जयपुर का नियोजन कराया."},
+      {q:"राजस्थान के किस व्यक्ति को 'वीर' कहा जाता है", options:["महाराणा प्रताप","सवाई जयसिंह II","रावल जेसल","राव जोधा"], answer:0, explain:"महाराणा प्रताप को वीर माना जाता है."},
+      {q:"राजस्थान के किस कवि ने लोकगीतों को संरक्षित किया", options:["कई लोक कवियों ने","केवल एक","कोई नहीं","सरकार"], answer:0, explain:"कई लोक कवियों ने लोकगीत संरक्षित किए."},
+      {q:"राजस्थान के किस व्यक्ति ने स्थापत्य कला में योगदान दिया", options:["राजाओं और शिल्पियों ने","केवल शिल्पियों ने","केवल राजाओं ने","कोई नहीं"], answer:0, explain:"राजाओं और शिल्पियों दोनों ने योगदान दिया."},
+      {q:"राजस्थान के किस नेता ने शिक्षा को बढ़ावा दिया", options:["कई स्थानीय शासकों ने","केवल एक","कोई नहीं","सरकार"], answer:0, explain:"कई स्थानीय शासकों ने शिक्षा को बढ़ावा दिया."},
+      {q:"राजस्थान के किस व्यक्ति को लोककला का संरक्षक माना जाता है", options:["स्थानीय संरक्षक और राजघराने","केवल सरकार","कोई नहीं","विदेशी संरक्षक"], answer:0, explain:"स्थानीय संरक्षक और राजघराने लोककला के संरक्षक रहे."},
+      {q:"राजस्थान के किस व्यक्ति ने संगीत को बढ़ावा दिया", options:["राजाओं और संरक्षकों ने","केवल संगीतकार","कोई नहीं","सरकार"], answer:0, explain:"राजाओं ने संगीत को बढ़ावा दिया."},
+      {q:"राजस्थान के किस व्यक्ति ने स्थापत्य में नए प्रयोग किए", options:["कई शिल्पियों ने","केवल एक","कोई नहीं","सरकार"], answer:0, explain:"कई शिल्पियों ने नए प्रयोग किए."},
+      {q:"राजस्थान के किस व्यक्ति ने लोककथाओं को संकलित किया", options:["स्थानीय विद्वानों ने","केवल एक","कोई नहीं","सरकार"], answer:0, explain:"स्थानीय विद्वानों ने लोककथाएँ संकलित कीं."},
+      {q:"राजस्थान के किस व्यक्ति ने पर्यटन को बढ़ावा दिया", options:["आधुनिक प्रशासन और स्थानीय उद्यमियों ने","केवल राजाओं ने","कोई नहीं","विदेशी निवेशक"], answer:0, explain:"आधुनिक प्रशासन और स्थानीय उद्यमियों ने पर्यटन बढ़ाया."},
+      {q:"राजस्थान के किस व्यक्ति ने हस्तशिल्प को वैश्विक पहचान दिलाई", options:["स्थानीय कारीगर और व्यापारी","केवल सरकार","कोई नहीं","विदेशी व्यापारी"], answer:0, explain:"स्थानीय कारीगरों ने हस्तशिल्प को पहचान दिलाई."},
+      {q:"राजस्थान के किस व्यक्ति ने लोकनृत्यों को संरक्षित किया", options:["स्थानीय कलाकारों ने","केवल सरकार","कोई नहीं","विदेशी कलाकार"], answer:0, explain:"स्थानीय कलाकारों ने लोकनृत्यों को संरक्षित किया."}
+    ]
+  },
+
+  administration: {
+    title: "Administration and Economy",
+    questions: [
+      {q:"राजस्थान की राजधानी क्या है", options:["Jaipur","Jodhpur","Udaipur","Bikaner"], answer:0, explain:"जयपुर राजस्थान की राजधानी है."},
+      {q:"राजस्थान का राज्यपाल किसे कहा जाता है", options:["राज्य का संवैधानिक प्रमुख","मुख्यमंत्री","सांसद","न्यायाधीश"], answer:0, explain:"राज्यपाल राज्य का संवैधानिक प्रमुख होता है."},
+      {q:"राजस्थान का मुख्य आर्थिक स्रोत कौन सा है", options:["कृषि और पर्यटन","केवल उद्योग","केवल सेवा क्षेत्र","मछली पालन"], answer:0, explain:"कृषि और पर्यटन प्रमुख स्रोत हैं."},
+      {q:"राजस्थान में कौन सा उद्योग पारंपरिक रूप से प्रसिद्ध है", options:["हस्तशिल्प और टेक्सटाइल","ऑटोमोबाइल","इलेक्ट्रॉनिक्स","फार्मा"], answer:0, explain:"हस्तशिल्प और टेक्सटाइल पारंपरिक उद्योग हैं."},
+      {q:"राजस्थान में 'राजस्थान राज्य विद्युत बोर्ड' किससे संबंधित है", options:["ऊर्जा वितरण","कृषि","स्वास्थ्य","शिक्षा"], answer:0, explain:"यह ऊर्जा वितरण से संबंधित है."},
+      {q:"राजस्थान में कितने जिले हैं (approx)", options:["33","10","50","100"], answer:0, explain:"राजस्थान में लगभग 33 जिले हैं (संरचनात्मक बदलावों के अनुसार बदल सकते हैं)."},
+      {q:"राजस्थान का प्रमुख कृषि फसल कौन सी है", options:["गेहूँ और बाजरा","चावल","चाय","कॉफी"], answer:0, explain:"गेहूँ और बाजरा प्रमुख फसलें हैं."},
+      {q:"राजस्थान में पर्यटन का प्रमुख आकर्षण क्या है", options:["किले, महल और मेले","समुद्र तट","बर्फीले पर्वत","जंगल सफारी नहीं"], answer:0, explain:"किले, महल और मेले प्रमुख आकर्षण हैं."},
+      {q:"राजस्थान में 'राजस्थान राज्य सड़क परिवहन निगम' किसके लिए है", options:["बस सेवाएँ","रेल सेवाएँ","हवाई सेवाएँ","नदी परिवहन"], answer:0, explain:"यह बस सेवाएँ प्रदान करता है."},
+      {q:"राजस्थान में 'राजस्थान कृषि विश्वविद्यालय' किस क्षेत्र में योगदान देता है", options:["कृषि अनुसंधान और शिक्षा","वाणिज्य","कानून","मेडिकल"], answer:0, explain:"कृषि अनुसंधान और शिक्षा में योगदान."},
+      {q:"राजस्थान में 'उद्योग नीति' किसका समर्थन करती है", options:["स्थानीय उद्यमियों और निवेश","केवल विदेशी निवेश","केवल सरकारी उद्योग","कोई नहीं"], answer:0, explain:"स्थानीय उद्यमियों और निवेश को समर्थन मिलता है."},
+      {q:"राजस्थान में 'पारंपरिक हस्तशिल्प' का निर्यात किसके लिए महत्वपूर्ण है", options:["आर्थिक आय और रोजगार","केवल संस्कृति","कोई नहीं","केवल पर्यटन"], answer:0, explain:"हस्तशिल्प निर्यात आर्थिक आय और रोजगार देता है."},
+      {q:"राजस्थान में 'जल संरक्षण' क्यों महत्वपूर्ण है", options:["कम वर्षा और सूखा जोखिम","अधिक वर्षा","समुद्र तट संरक्षण","नदी बाढ़"], answer:0, explain:"कम वर्षा के कारण जल संरक्षण आवश्यक है."},
+      {q:"राजस्थान में 'सौर ऊर्जा' का क्या महत्व है", options:["ऊर्जा स्रोत के रूप में बढ़ता हुआ महत्व","कोई महत्व नहीं","केवल परंपरागत","निश्चित नहीं"], answer:0, explain:"सौर ऊर्जा राजस्थान में महत्वपूर्ण है."},
+      {q:"राजस्थान में 'हाथी' पर्यटन के लिए किस क्षेत्र में मिलता है", options:["केवल कुछ संरक्षित क्षेत्रों में","सभी शहरों में","रेगिस्तान में नहीं","नदी किनारे"], answer:0, explain:"हाथी पर्यटन कुछ संरक्षित क्षेत्रों में मिलता है."},
+      {q:"राजस्थान में 'कृषि बाजार' किसके लिए महत्वपूर्ण हैं", options:["किसानों की आय और व्यापार","केवल उपभोक्ता","कोई नहीं","सरकार"], answer:0, explain:"कृषि बाजार किसानों की आय के लिए महत्वपूर्ण हैं."},
+      {q:"राजस्थान में 'हेरिटेज पर्यटन' किसका हिस्सा है", options:["किले, महल और सांस्कृतिक कार्यक्रम","केवल समुद्र तट","केवल जंगल","केवल पर्वत"], answer:0, explain:"हेरिटेज पर्यटन किले, महल और सांस्कृतिक कार्यक्रमों पर आधारित है."},
+      {q:"राजस्थान में 'बुनकर' किस उद्योग से जुड़े हैं", options:["टेक्सटाइल और हस्तशिल्प","इलेक्ट्रॉनिक्स","फार्मा","ऑटो"], answer:0, explain:"बुनकर टेक्सटाइल और हस्तशिल्प से जुड़े हैं."},
+      {q:"राजस्थान में 'स्थानीय शासन' किस इकाई के माध्यम से होता है", options:["पंचायत और नगर निगम","केवल राज्य सरकार","केवल केंद्र सरकार","कोई नहीं"], answer:0, explain:"स्थानीय शासन पंचायत और नगर निगम के माध्यम से होता है."},
+      {q:"राजस्थान में 'कृषि सिंचाई' के प्रमुख स्रोत क्या हैं", options:["नहरें और ट्यूबवेल","समुद्र","बर्फ पिघलना","केवल वर्षा"], answer:0, explain:"नहरें और ट्यूबवेल प्रमुख स्रोत हैं."},
+      {q:"राजस्थान में 'हाथकरघा' किसके लिए प्रसिद्ध है", options:["कपड़ा और कालीन","इलेक्ट्रॉनिक्स","फर्नीचर","कृषि"], answer:0, explain:"हाथकरघा कपड़ा और कालीन के लिए प्रसिद्ध है."},
+      {q:"राजस्थान में 'पर्यटन' से रोजगार किसे मिलता है", options:["स्थानीय समुदाय और उद्यमियों","केवल सरकार","कोई नहीं","विदेशी कंपनियाँ"], answer:0, explain:"स्थानीय समुदाय और उद्यमियों को रोजगार मिलता है."},
+      {q:"राजस्थान में 'जलवायु' किस प्रकार की है", options:["अर्ध-शुष्क से शुष्क","उष्णकटिबंधीय","आर्द्र","ठंडी"], answer:0, explain:"राजस्थान की जलवायु अर्ध-शुष्क से शुष्क है."},
+      {q:"राजस्थान में 'सामुदायिक वन' किसलिए उपयोगी हैं", options:["स्थानीय संसाधन और संरक्षण","केवल पर्यटन","कोई नहीं","केवल कृषि"], answer:0, explain:"सामुदायिक वन स्थानीय संसाधन और संरक्षण के लिए उपयोगी हैं."}
+    ]
+  },
+
+  festivals: {
+    title: "Festivals and Languages",
+    questions: [
+      {q:"पुष्कर मेला किसके लिए प्रसिद्ध है", options:["कांस्य और ऊँट मेला","समुद्र तट","बर्फ उत्सव","नदी उत्सव"], answer:0, explain:"पुष्कर मेला ऊँट मेला और ब्रह्मा मंदिर के लिए प्रसिद्ध है."},
+      {q:"तेजाजी का त्योहार किसके लिए मनाया जाता है", options:["लोक देवता की पूजा","कृषि त्योहार","नया साल","विवाह"], answer:0, explain:"तेजाजी लोक देवता की पूजा के लिए मनाया जाता है."},
+      {q:"राजस्थान की प्रमुख भाषा कौन सी है", options:["हिन्दी और राजस्थानी बोलियाँ","केवल अंग्रेजी","केवल पंजाबी","केवल गुजराती"], answer:0, explain:"हिन्दी और राजस्थानी बोलियाँ प्रमुख हैं."},
+      {q:"गणगौर त्योहार किसके लिए प्रसिद्ध है", options:["कृष्ण और पार्वती की पूजा","केवल नृत्य","केवल संगीत","कोई नहीं"], answer:0, explain:"गणगौर पार्वती की पूजा से जुड़ा त्योहार है."},
+      {q:"राजस्थान में 'तीर्थ' किस प्रकार के त्योहार होते हैं", options:["धार्मिक और सांस्कृतिक","केवल खेल","केवल व्यापार","कोई नहीं"], answer:0, explain:"तीर्थ धार्मिक और सांस्कृतिक होते हैं."},
+      {q:"राजस्थानी भाषा की प्रमुख बोलियाँ कौन सी हैं", options:["मारवाड़ी, मेवाड़ी, मवाती","केवल मारवाड़ी","केवल मेवाड़ी","केवल मवाती"], answer:0, explain:"मारवाड़ी, मेवाड़ी और मवाती प्रमुख बोलियाँ हैं."},
+      {q:"राजस्थान में 'दीपावली' कैसे मनाई जाती है", options:["प्रकाश और पूजा के साथ","केवल भोजन","केवल नृत्य","कोई नहीं"], answer:0, explain:"दीपावली प्रकाश और पूजा के साथ मनाई जाती है."},
+      {q:"राजस्थान में 'होली' किस तरह मनाई जाती है", options:["रंग और लोकगीतों के साथ","केवल रंग","केवल भोजन","कोई नहीं"], answer:0, explain:"होली रंग और लोकगीतों के साथ मनाई जाती है."},
+      {q:"राजस्थान में 'ऊँट मेला' किस शहर में होता है", options:["Pushkar","Jaipur","Jodhpur","Bikaner"], answer:0, explain:"ऊँट मेला पुष्कर में होता है."},
+      {q:"राजस्थान में 'मकर संक्रांति' किस नाम से मनाई जाती है", options:["खिचड़ी नहीं","उत्सव के रूप में","केवल पूजा","कोई नहीं"], answer:1, explain:"मकर संक्रांति को स्थानीय रूपों में मनाया जाता है."},
+      {q:"राजस्थान में 'भजन और कीर्तन' किस अवसर पर होते हैं", options:["धार्मिक समारोहों में","केवल त्योहारों में","केवल विवाह में","कोई नहीं"], answer:0, explain:"धार्मिक समारोहों में भजन-कीर्तन होते हैं."},
+      {q:"राजस्थान में 'लोक नृत्य' किस अवसर पर दिखता है", options:["त्योहार और मेले","केवल शादी","केवल बाजार","कोई नहीं"], answer:0, explain:"त्योहार और मेले लोक नृत्य के अवसर हैं."},
+      {q:"राजस्थान में 'भाषाई विविधता' का कारण क्या है", options:["ऐतिहासिक और भौगोलिक विविधता","केवल एक कारण","कोई नहीं","केवल आधुनिक प्रवास"], answer:0, explain:"ऐतिहासिक और भौगोलिक कारणों से भाषाई विविधता है."},
+      {q:"राजस्थान में 'लोकगीत' किस भाषा में अधिक मिलते हैं", options:["राजस्थानी बोलियों में","केवल हिंदी में","केवल अंग्रेजी में","कोई नहीं"], answer:0, explain:"लोकगीत राजस्थानी बोलियों में मिलते हैं."},
+      {q:"राजस्थान में 'त्योहारों का महत्व' क्या दर्शाता है", options:["सामुदायिक एकता और परंपरा","केवल मनोरंजन","कोई नहीं","केवल व्यापार"], answer:0, explain:"त्योहार सामुदायिक एकता और परंपरा दर्शाते हैं."},
+      {q:"राजस्थान में 'भाषा संरक्षण' क्यों आवश्यक है", options:["संस्कृति और पहचान के लिए","केवल शिक्षा के लिए","कोई नहीं","केवल पर्यटन के लिए"], answer:0, explain:"भाषा संरक्षण संस्कृति और पहचान के लिए आवश्यक है."},
+      {q:"राजस्थान में 'लोक कला' किस अवसर पर प्रदर्शित होती है", options:["मेले और उत्सवों में","केवल संग्रहालय में","केवल निजी कार्यक्रमों में","कोई नहीं"], answer:0, explain:"मेले और उत्सव लोक कला के प्रमुख मंच हैं."},
+      {q:"राजस्थान में 'भाषाई उत्सव' किसका हिस्सा हैं", options:["सांस्कृतिक संरक्षण","केवल शिक्षा","कोई नहीं","केवल व्यापार"], answer:0, explain:"भाषाई उत्सव सांस्कृतिक संरक्षण का हिस्सा हैं."},
+      {q:"राजस्थान में 'लोक संगीत' किसके साथ जुड़ा है", options:["कहानियों और इतिहास के साथ","केवल नृत्य","केवल भोजन","कोई नहीं"], answer:0, explain:"लोक संगीत कहानियों और इतिहास से जुड़ा है."},
+      {q:"राजस्थान में 'त्योहारों की विविधता' किस कारण है", options:["भौगोलिक और सांस्कृतिक विविधता","केवल एक कारण","कोई नहीं","केवल आधुनिकता"], answer:0, explain:"भौगोलिक और सांस्कृतिक विविधता कारण है."},
+      {q:"राजस्थान में 'भाषाई पहचान' किस तरह बनी", options:["स्थानीय बोलियों और परंपराओं से","केवल शिक्षा से","कोई नहीं","केवल सरकार से"], answer:0, explain:"स्थानीय बोलियाँ और परंपराएँ पहचान बनाती हैं."},
+      {q:"राजस्थान में 'त्योहारों का पर्यटन' किसे बढ़ावा देता है", options:["स्थानीय अर्थव्यवस्था","केवल संस्कृति","कोई नहीं","केवल सरकार"], answer:0, explain:"त्योहार पर्यटन स्थानीय अर्थव्यवस्था बढ़ाते हैं."},
+      {q:"राजस्थान में 'भाषाई अध्ययन' किसके लिए उपयोगी है", options:["संस्कृति और शिक्षा के लिए","केवल रोजगार","कोई नहीं","केवल पर्यटन"], answer:0, explain:"भाषाई अध्ययन संस्कृति और शिक्षा के लिए उपयोगी है."},
+      {q:"राजस्थान में 'लोक कला और भाषा' का संरक्षण किससे संभव है", options:["स्थानीय समुदाय और नीतियों से","केवल सरकार","कोई नहीं","केवल विदेशी मदद"], answer:0, explain:"स्थानीय समुदाय और नीतियाँ संरक्षण में मदद करती हैं."}
+    ]
+  }
+};
+
+/* ---------------------------
+   App State
+   --------------------------- */
+let currentTopicKey = null;
+let currentIndex = 0;
+let userAnswers = []; // store selected index or null for skip
+let showAnswersAfterFinish = true;
+
+/* ---------------------------
+   DOM Elements
+   --------------------------- */
+const topicsList = document.getElementById('topicsList');
+const startButtons = document.getElementById('startButtons');
+const quizCard = document.getElementById('quizCard');
+const startCard = document.getElementById('startCard');
+const resultCard = document.getElementById('resultCard');
+const topicTitle = document.getElementById('topicTitle');
+const qIndex = document.getElementById('qIndex');
+const questionText = document.getElementById('questionText');
+const optionsList = document.getElementById('optionsList');
+const progressBar = document.getElementById('progressBar');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const skipBtn = document.getElementById('skipBtn');
+const sideTopic = document.getElementById('sideTopic');
+const sideQ = document.getElementById('sideQ');
+const sideAnswered = document.getElementById('sideAnswered');
+const sideSkipped = document.getElementById('sideSkipped');
+const finalScore = document.getElementById('finalScore');
+const finalPercent = document.getElementById('finalPercent');
+const finalTopic = document.getElementById('finalTopic');
+const resultList = document.getElementById('resultList');
+const startCardContainer = document.getElementById('startCard');
+const startCardButtons = document.getElementById('startButtons');
+const showAnswersBtn = document.getElementById('showAnswers');
+const resetAll = document.getElementById('resetAll');
+const retryBtn = document.getElementById('retryBtn');
+const backTopics = document.getElementById('backTopics');
+const topicCount = document.getElementById('topicCount');
+
+/* ---------------------------
+   Initialize Topics UI
+   --------------------------- */
+function initTopics(){
+  topicsList.innerHTML = '';
+  startCardButtons.innerHTML = '';
+  const keys = Object.keys(questionsData);
+  topicCount.textContent = `${keys.length} Topics • 25 Questions each`;
+  keys.forEach(key=>{
+    const t = questionsData[key];
+    const btn = document.createElement('button');
+    btn.className = 'topic-btn';
+    btn.innerHTML = `<div style="font-weight:700">${t.title}</div><div class="small" style="margin-top:6px">25 Questions</div>`;
+    btn.onclick = ()=>selectTopic(key);
+    topicsList.appendChild(btn);
+
+    // quick start buttons
+    const sbtn = document.createElement('button');
+    sbtn.className = 'btn ghost';
+    sbtn.style.padding = '8px 12px';
+    sbtn.textContent = `Start ${t.title}`;
+    sbtn.onclick = ()=>selectTopic(key);
+    startCardButtons.appendChild(sbtn);
+  });
+}
+initTopics();
+
+/* ---------------------------
+   Select Topic
+   --------------------------- */
+function selectTopic(key){
+  currentTopicKey = key;
+  currentIndex = 0;
+  userAnswers = new Array(questionsData[key].questions.length).fill(null);
+  // UI updates
+  document.querySelectorAll('.topic-btn').forEach((b,i)=>{
+    b.classList.toggle('active', Object.keys(questionsData)[i]===key);
+  });
+  topicTitle.textContent = questionsData[key].title;
+  sideTopic.textContent = questionsData[key].title;
+  sideQ.textContent = `1 / ${questionsData[key].questions.length}`;
+  sideAnswered.textContent = 0;
+  sideSkipped.textContent = 0;
+  startCard.style.display = 'none';
+  resultCard.style.display = 'none';
+  quizCard.style.display = 'block';
+  renderQuestion();
+}
+
+/* ---------------------------
+   Render Question
+   --------------------------- */
+function renderQuestion(){
+  const data = questionsData[currentTopicKey];
+  const qObj = data.questions[currentIndex];
+  qIndex.textContent = `Q ${currentIndex+1} / ${data.questions.length}`;
+  questionText.textContent = qObj.q;
+  optionsList.innerHTML = '';
+  qObj.options.forEach((opt, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'option' + (userAnswers[currentIndex]===idx ? ' selected' : '');
+    div.textContent = opt;
+    div.onclick = ()=>selectOption(idx);
+    optionsList.appendChild(div);
+  });
+  updateProgress();
+  updateSideStats();
+  // Prev/Next button states
+  prevBtn.disabled = currentIndex===0;
+  prevBtn.style.opacity = prevBtn.disabled?0.6:1;
+  nextBtn.textContent = (currentIndex===data.questions.length-1) ? 'Finish' : 'Next';
+}
+
+/* ---------------------------
+   Select Option
+   --------------------------- */
+function selectOption(idx){
+  userAnswers[currentIndex] = idx;
+  renderQuestion();
+}
+
+/* ---------------------------
+   Navigation
+   --------------------------- */
+prevBtn.onclick = ()=>{
+  if(currentIndex>0){ currentIndex--; renderQuestion(); }
+};
+nextBtn.onclick = ()=>{
+  const data = questionsData[currentTopicKey];
+  if(currentIndex < data.questions.length-1){
+    currentIndex++;
+    renderQuestion();
+  } else {
+    finishQuiz();
+  }
+};
+skipBtn.onclick = ()=>{
+  userAnswers[currentIndex] = null; // mark skipped
+  if(currentIndex < questionsData[currentTopicKey].questions.length-1){
+    currentIndex++;
+    renderQuestion();
+  } else {
+    finishQuiz();
+  }
+};
+
+/* ---------------------------
+   Progress and Side Stats
+   --------------------------- */
+function updateProgress(){
+  const total = questionsData[currentTopicKey].questions.length;
+  const percent = Math.round(((currentIndex)/total)*100);
+  progressBar.style.width = `${percent}%`;
+}
+function updateSideStats(){
+  const total = questionsData[currentTopicKey].questions.length;
+  const answered = userAnswers.filter(a=>a!==null).length;
+  const skipped = userAnswers.filter(a=>a===null).length;
+  sideQ.textContent = `${currentIndex+1} / ${total}`;
+  sideAnswered.textContent = answered;
+  sideSkipped.textContent = skipped;
+}
+
+/* ---------------------------
+   Finish Quiz and Show Result
+   --------------------------- */
+function finishQuiz(){
+  const data = questionsData[currentTopicKey];
+  const total = data.questions.length;
+  let correct = 0;
+  resultList.innerHTML = '';
+  data.questions.forEach((q, i)=>{
+    const user = userAnswers[i];
+    const isCorrect = (user !== null && user === q.answer);
+    if(isCorrect) correct++;
+    // result item
+    const item = document.createElement('div');
+    item.className = 'result-item';
+    item.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-weight:700">Q${i+1}. ${q.q}</div>
+      <div>${isCorrect?'<span class="correct">Correct</span>':'<span class="wrong">Wrong</span>'}</div>
+    </div>
+    <div style="margin-top:8px" class="small">
+      Your answer: <strong>${user===null? 'Skipped' : q.options[user]}</strong> • Correct: <strong>${q.options[q.answer]}</strong>
+    </div>
+    <div style="margin-top:6px;color:var(--muted)" class="small">Note: ${q.explain || '—'}</div>`;
+    resultList.appendChild(item);
+  });
+  // score
+  finalScore.textContent = `${correct} / ${total}`;
+  const percent = Math.round((correct/total)*100);
+  finalPercent.textContent = `${percent}%`;
+  finalTopic.textContent = data.title;
+  // show result
+  quizCard.style.display = 'none';
+  resultCard.style.display = 'block';
+  // scroll to result
+  resultCard.scrollIntoView({behavior:'smooth'});
+  // save progress optionally
+  saveProgress(currentTopicKey, userAnswers);
+}
+
+/* ---------------------------
+   Persistence (optional)
+   --------------------------- */
+function saveProgress(topicKey, answers){
+  try{
+    const key = `rj_quiz_${topicKey}`;
+    localStorage.setItem(key, JSON.stringify(answers));
+  }catch(e){}
+}
+function loadProgress(topicKey){
+  try{
+    const key = `rj_quiz_${topicKey}`;
+    const raw = localStorage.getItem(key);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return null;
+}
+
+/* ---------------------------
+   Reset and Utility Buttons
+   --------------------------- */
+resetAll.onclick = ()=>{
+  if(confirm('सभी प्रोग्रेस हटानी है?')) {
+    Object.keys(questionsData).forEach(k=>localStorage.removeItem(`rj_quiz_${k}`));
+    alert('Progress reset हो गया।');
+    location.reload();
+  }
+};
+showAnswersBtn.onclick = ()=>{
+  showAnswersAfterFinish = !showAnswersAfterFinish;
+  showAnswersBtn.textContent = showAnswersAfterFinish ? 'Show Answers After Finish' : 'Hide Answers After Finish';
+};
+retryBtn.onclick = ()=>{
+  if(currentTopicKey){
+    selectTopic(currentTopicKey);
+  }
+};
+backTopics.onclick = ()=>{
+  resultCard.style.display = 'none';
+  startCard.style.display = 'block';
+  quizCard.style.display = 'none';
+  document.querySelectorAll('.topic-btn').forEach(b=>b.classList.remove('active'));
+};
+
+/* ---------------------------
+   On Load: populate start buttons and try to load saved progress
+   --------------------------- */
+window.addEventListener('load', ()=>{
+  // If user had saved progress for any topic, show quick resume
+  Object.keys(questionsData).forEach(key=>{
+    const saved = loadProgress(key);
+    if(saved){
+      // add resume button
+      const btn = document.createElement('button');
+      btn.className = 'btn';
+      btn.style.padding = '8px 12px';
+      btn.textContent = `Resume ${questionsData[key].title}`;
+      btn.onclick = ()=>{
+        currentTopicKey = key;
+        userAnswers = saved;
+        // find first unanswered
+        currentIndex = saved.findIndex(x=>x===null);
+        if(currentIndex===-1) currentIndex = 0;
+        selectTopic(key);
+      };
+      startButtons.appendChild(btn);
+    }
+  });
+});
+
+/* ---------------------------
+   Accessibility: keyboard navigation
+   --------------------------- */
+document.addEventListener('keydown', (e)=>{
+  if(quizCard.style.display==='block'){
+    if(e.key==='ArrowRight') nextBtn.click();
+    if(e.key==='ArrowLeft') prevBtn.click();
+    if(e.key>='1' && e.key<='4'){
+      const idx = parseInt(e.key)-1;
+      const opts = document.querySelectorAll('.option');
+      if(opts[idx]) opts[idx].click();
+    }
+  }
+});
+</script>
+</body>
+</html>
